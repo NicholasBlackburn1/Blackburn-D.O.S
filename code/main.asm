@@ -47,7 +47,7 @@ clear_loop      lda #$20
 
    
 title_loop
-                ldy #$00 ; number of chars in the title
+                ldy #$0D ; number of chars in the title
                 lda title,y             ; load character number y of the string
                 sta SCREENRAM,y         ; save it at position y of the screen ram
                 dey                     ; decrement y by 1
@@ -57,7 +57,7 @@ title_loop
    
 author_loop
 
-                ldy #$00   ; number of chars in the author
+                ldy #$11   ; number of chars in the author
                 lda author,y             ; load character number y of the string
                 sta SCREENRAM,y         ; save it at position y of the screen ram
                 dey                     ; decrement y by 1

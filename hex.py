@@ -8,8 +8,8 @@ def string_to_hex(input_string):
     return hex_length
 
 # Input strings
-title_string = "nicky dos dev"
-author_string = "by nicky blackburn"
+title_string = "blackburn dos"
+author_string = "by nickyblackburn"
 
 # Convert strings to hexadecimal
 title_hex = string_to_hex(title_string)
