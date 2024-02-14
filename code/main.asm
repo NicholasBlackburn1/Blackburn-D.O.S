@@ -4,23 +4,6 @@
 ; Depending on your target machine
 ;==========================================================
 
-; VC20
-;BGCOLOR       = $900f
-;BORDERCOLOR   = $900f
-;BASIC         = $1001
-;SCREENRAM     = $1e00
-
-; C16, C116, Plus/4
-;BGCOLOR      = $ff15
-;BORDERCOLOR  = $ff19
-;BASIC        = $1001
-;SCREENRAM    = $0c00
-
-; C128
-;BGCOLOR       = $d020
-;BORDERCOLOR   = $d021
-;BASIC         = $1c01
-;SCREENRAM     = $0400
 
 ; C64
 BGCOLOR       = $d020
@@ -65,14 +48,14 @@ clear_loop      lda #$20
                 ; Display "Nicky DOS Dev-0.1" message
 title_loop      ldy #$0d
                 lda title,y
-                sta $0400+($40*2+(40-$0b)/2),y ; Adjust starting position to center text
+                sta $0400+($40*2),y ; Set starting position to left side of the screen
                 dey
                 bpl title_loop
 
                 ; Display "Author message" message
 author_loop     ldy #$11
                 lda author,y
-                sta $0400+($40*3+(40-$0b)/2),y ; Adjust starting position to center text
+                sta $0400+($40*3),y ; Set starting position to left side of the screen
                 dey
                 bpl author_loop
 
