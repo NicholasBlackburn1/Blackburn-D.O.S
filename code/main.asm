@@ -4,12 +4,15 @@
 ; Depending on your target machine
 ;==========================================================
 
-
 ; C64
-BGCOLOR       = $d020
-BORDERCOLOR   = $d021
+BGCOLOR       = $04
+BORDERCOLOR   = $02	
 BASIC         = $0801
 SCREENRAM     = $0400
+
+; Dolphin DOS-like memory layout
+;SCREENRAM     = $0800   ; Adjust the screen memory start address
+;SCREEN_WIDTH  = 40      ; Adjust the screen width
 
 ;==========================================================
 ; BASIC header
@@ -38,32 +41,31 @@ entry
                 lda #$0d                ; Load the color light blue
                 sta BORDERCOLOR         ; Change border color
 
-                ldy #$0b                ; The string "hello world!" has 12 (= $0b) characters
+                ; Clear the screen
+                ldy #$00
+clear_loop      lda #$20
+                sta SCREENRAM,y
+                iny
+                cpy #$e8
+                bne clear_loop
 
-character_loop
-
-                lda hello,y             ; Load character number y of the string
-                sta SCREENRAM,y         ; Save it at position y of the screen RAM
-                dey                     ; Decrement y by 1
-                bpl character_loop      ; Is y positive? Then repeat
 
                 ; Additional text strings
                 ldy #$08                ; The string "blackburn dos" has 13 characters
 title_loop
                 lda title,y             ; Load character number y of the string
-                sta SCREENRAM+($40*2+13),y ; Save it at position y of the screen RAM (2nd line)
+                sta SCREENRAM+($40*3+3),y ; Save it at position y of the screen RAM (3rd line)
                 dey                     ; Decrement y by 1
                 bpl title_loop          ; Is y positive? Then repeat
 
                 ldy #$0b                ; The string "by nicky blackburn" has 18 characters
 author_loop
                 lda author,y            ; Load character number y of the string
-                sta SCREENRAM+($40*3+13),y ; Save it at position y of the screen RAM (3rd line)
+                sta SCREENRAM+($40*4+3),y ; Save it at position y of the screen RAM (4th line)
                 dey                     ; Decrement y by 1
                 bpl author_loop         ; Is y positive? Then repeat
 
                 rts                     ; Exit the program
 
-hello           !scr "hello world!"     ; Our string to display
 title           !scr "blackburn dos"    ; Title string
 author          !scr "by nicky blackburn" ; Author string
