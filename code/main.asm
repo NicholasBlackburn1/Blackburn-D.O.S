@@ -17,14 +17,15 @@ SCREENRAM     = $0400
 
 * = BASIC
 
-                !byte $0b, $08      ; Title length and line number
-                !byte $E3                     
+                !byte $0b, $08
+                !byte $E3                     ; BASIC line number:  $E2=2018 $E3=2019 etc       
                 !byte $07, $9E
                 !byte '0' + entry % 10000 / 1000        
                 !byte '0' + entry %  1000 /  100        
                 !byte '0' + entry %   100 /   10        
                 !byte '0' + entry %    10             
-                !byte $00, $00, $00  ; End of BASIC
+                !byte $00, $00, $00           ; end of basic
+
 
 ;==========================================================
 ; CODE
@@ -32,37 +33,18 @@ SCREENRAM     = $0400
 
 entry
 
-                lda #$00            ; Set background color to black
-                sta BGCOLOR         
-                lda #$0d            ; Set border color to light blue
-                sta BORDERCOLOR         
+                lda #$00                ; the color value
+                sta BGCOLOR             ; change background color
+                sta BORDERCOLOR         ; change border color
 
-                ; Clear the screen
-                ldy #$00
-clear_loop      lda #$20
-                sta SCREENRAM,y
-                iny
-                cpy #$e8
-                bne clear_loop
+                ldy #$0b                ; the string "hello world!" has 12 (= $0b) characters
 
-   
-title_loop
-                ldy #$0D ; number of chars in the title
-                lda title,y             ; load character number y of the string
+character_loop
+
+                lda hello,y             ; load character number y of the string
                 sta SCREENRAM,y         ; save it at position y of the screen ram
                 dey                     ; decrement y by 1
-                bpl title_loop      ; is y positive? then repeat
+                bpl character_loop      ; is y positive? then repeat
                 rts                     ; exit the program
 
-   
-author_loop
-
-                ldy #$11   ; number of chars in the author
-                lda author,y             ; load character number y of the string
-                sta SCREENRAM,y         ; save it at position y of the screen ram
-                dey                     ; decrement y by 1
-                bpl author_loop      ; is y positive? then repeat
-                rts                     ; exit the program
-
-title           !scr "blackburn dos"     ; the title
-author          !scr "by nickyblackburn" ; the author 
+hello           !scr "hello world!"     ; our string to displa
