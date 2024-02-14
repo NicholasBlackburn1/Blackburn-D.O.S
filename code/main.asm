@@ -45,21 +45,24 @@ clear_loop      lda #$20
                 cpy #$e8
                 bne clear_loop
 
-                ; Display "Nicky DOS Dev-0.1" message
-title_loop      ldy #$0d
-                lda title,y
-                sta $0400+($40*2),y ; Set starting position to left side of the screen
-                dey
-                bpl title_loop
+   
+title_loop
+                ldy #$00 ; number of chars in the title
+                lda title,y             ; load character number y of the string
+                sta SCREENRAM,y         ; save it at position y of the screen ram
+                dey                     ; decrement y by 1
+                bpl title_loop      ; is y positive? then repeat
+                rts                     ; exit the program
 
-                ; Display "Author message" message
-author_loop     ldy #$11
-                lda author,y
-                sta $0400+($40*3),y ; Set starting position to left side of the screen
-                dey
-                bpl author_loop
+   
+author_loop
 
-                rts
+                ldy #$00   ; number of chars in the author
+                lda author,y             ; load character number y of the string
+                sta SCREENRAM,y         ; save it at position y of the screen ram
+                dey                     ; decrement y by 1
+                bpl author_loop      ; is y positive? then repeat
+                rts                     ; exit the program
 
-title           !scr "nicky dos dev"
-author          !scr " by nicky blackburn"
+title           !scr "blackburn dos"     ; the title
+author          !scr "by nickyblackburn" ; the author 
