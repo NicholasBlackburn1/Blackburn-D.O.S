@@ -10,10 +10,6 @@ BORDERCOLOR   = $d021
 BASIC         = $0801
 SCREENRAM     = $0400
 
-; Dolphin DOS-like memory layout
-;SCREENRAM     = $0800   ; Adjust the screen memory start address
-;SCREEN_WIDTH  = 40      ; Adjust the screen width
-
 ;==========================================================
 ; BASIC header
 ;==========================================================
@@ -40,15 +36,9 @@ entry
                 sta BGCOLOR             ; Change background color
                 lda #$0d                ; Load the color light blue
                 sta BORDERCOLOR         ; Change border color
-                ldy #$00
 
-                ; Clear the screen
-                ldy #$00
-clear_loop      lda #$20
-                sta SCREENRAM,y
-                iny
-                cpy #$e8
-                bne clear_loop
+                ; Call subroutine to clear the screen
+                jsr clear_screen
 
                 ; Additional text strings
                 ldy #$08                ; The string "blackburn dos" has 13 characters
@@ -64,6 +54,14 @@ author_loop
                 sta SCREENRAM+($40*4+3),y ; Save it at position y of the screen RAM (4th line)
                 dey                     ; Decrement y by 1
                 bpl author_loop         ; Is y positive? Then repeat
+
+                rts                     ; Return from subroutine
+
+; Subroutine to clear the screen
+clear_screen
+                lda #$93                ; Load CHR$(147) character code
+                jsr $ffd2               ; Call KERNAL routine to print CHR$(147)
+                rts                     ; Return from subroutine
 
             
 title           !scr "blackburn dos"    ; Title string
