@@ -5,8 +5,8 @@
 ;==========================================================
 
 ; C64
-BGCOLOR       = $04
-BORDERCOLOR   = $02	
+BGCOLOR       = $d020
+BORDERCOLOR   = $d021
 BASIC         = $0801
 SCREENRAM     = $0400
 
@@ -40,6 +40,7 @@ entry
                 sta BGCOLOR             ; Change background color
                 lda #$0d                ; Load the color light blue
                 sta BORDERCOLOR         ; Change border color
+                ldy #$00
 
                 ; Clear the screen
                 ldy #$00
@@ -48,7 +49,6 @@ clear_loop      lda #$20
                 iny
                 cpy #$e8
                 bne clear_loop
-
 
                 ; Additional text strings
                 ldy #$08                ; The string "blackburn dos" has 13 characters
@@ -65,7 +65,6 @@ author_loop
                 dey                     ; Decrement y by 1
                 bpl author_loop         ; Is y positive? Then repeat
 
-                rts                     ; Exit the program
-
+            
 title           !scr "blackburn dos"    ; Title string
 author          !scr "by nicky blackburn" ; Author string
