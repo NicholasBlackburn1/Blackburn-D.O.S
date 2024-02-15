@@ -8,7 +8,8 @@
 BGCOLOR       = $d020
 BORDERCOLOR   = $d021
 BASIC         = $0801
-SCREENRAM     = $0400
+SCREENRAM     = $0590
+SECONDLINE =  $05e0
 
 ;==========================================================
 ; BASIC header
@@ -45,19 +46,12 @@ entry
                 ldy #$0e                ; The string "blackburn dos" has 13 characters
 title_loop
                 lda title,x             ; Load character number x of the string
-                sta SCREENRAM+($40*3+13-5),y ; Save it at the calculated position y of the screen RAM (3rd line)
+                sta SCREENRAM ; Save it at the calculated position y of the screen RAM (3rd line)
+                lda author,x  
+                sta SECONDLINE
                 inx                     ; Increment x by 1
-                cpx #$0d                ; Is x equal to 13 (end of string)? If yes, exit loop
-                bne title_loop          ; If not, repeat
-
-                ldx #$00                ; Re-initialize x to 0 to start from the left
-                ldy #$0b                ; The string "by nicky blackburn" has 18 characters
-author_loop
-                lda author,x            ; Load character number x of the string
-                sta SCREENRAM+($40*4+11),y ; Save it at the calculated position y of the screen RAM (4th line)
-                inx                     ; Increment x by 1
-                cpx #$12                ; Is x equal to 18 (end of string)? If yes, exit loop
-                bne author_loop         ; If not, repeat
+                cpx #$28                 ; Is x equal to 18 (end of string)? If yes, exit loop
+                bne title_loop         ; If not, repeat
 
                 rts                     ; Return from subroutine
 
