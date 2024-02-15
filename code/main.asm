@@ -1,3 +1,4 @@
+
 ;==========================================================
 ; LABELS
 ; Comment or uncomment the lines below 
@@ -8,8 +9,11 @@
 BGCOLOR       = $d020
 BORDERCOLOR   = $d021
 BASIC         = $0801
-SCREENRAM     = $0590
-SECONDLINE =  $05e0
+SCREENRAM     = $0400
+
+; Dolphin DOS-like memory layout
+;SCREENRAM     = $0800   ; Adjust the screen memory start address
+;SCREEN_WIDTH  = 40      ; Adjust the screen width
 
 ;==========================================================
 ; BASIC header
@@ -38,29 +42,40 @@ entry
                 lda #$0d                ; Load the color light blue
                 sta BORDERCOLOR         ; Change border color
 
-                ; Call subroutine to clear the screen
-                jsr clear_screen
+                ; Clear the screen
+                ldy #$00
+clear_loop      lda #$20
+                sta SCREENRAM,y
+                iny
+                cpy #$e8
+                bne clear_loop
+
+                ldy #$0b                ; The string "hello world!" has 12 (= $0b) characters
+
+character_loop
+
+                lda hello,y             ; Load character number y of the string
+                sta SCREENRAM+($40*2+3),y ; Save it at position y of the screen RAM (2nd line)
+                dey                     ; Decrement y by 1
+                bpl character_loop      ; Is y positive? Then repeat
 
                 ; Additional text strings
-                ldx #$00                ; Initialize x to 0 to start from the left
-                ldy #$0e                ; The string "blackburn dos" has 13 characters
+                ldy #$08                ; The string "blackburn dos" has 13 characters
 title_loop
-                lda title,x             ; Load character number x of the string
-                sta SCREENRAM ; Save it at the calculated position y of the screen RAM (3rd line)
-                lda author,x  
-                sta SECONDLINE
-                inx                     ; Increment x by 1
-                cpx #$28                 ; Is x equal to 18 (end of string)? If yes, exit loop
-                bne title_loop         ; If not, repeat
+                lda title,y             ; Load character number y of the string
+                sta SCREENRAM+($40*3+7),y ; Save it at position y of the screen RAM (3rd line)
+                dey                     ; Decrement y by 1
+                bpl title_loop          ; Is y positive? Then repeat
 
-                rts                     ; Return from subroutine
+                ldy #$0b                ; The string "by nicky blackburn" has 18 characters
+author_loop
+                lda author,y            ; Load character number y of the string
+                sta SCREENRAM+($40*4+3),y ; Save it at position y of the screen RAM (4th line)
+                dey                     ; Decrement y by 1
+                bpl author_loop         ; Is y positive? Then repeat
 
-; Subroutine to clear the screen
-clear_screen
-                lda #$93                ; Load CHR$(147) character code
-                jsr $ffd2               ; Call KERNAL routine to print CHR$(147)
-                rts                     ; Return from subroutine
+                rts                     ; Exit the program
 
-            
+hello           !scr "hello world!"     ; Our string to display
 title           !scr "blackburn dos"    ; Title string
 author          !scr "by nicky blackburn" ; Author string
